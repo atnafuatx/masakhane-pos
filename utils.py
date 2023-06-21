@@ -215,9 +215,10 @@ def get_labels(path):
             labels = ["X"] + labels
         return labels
     else:
-        return ["X", "ADJ", "ADP", "ADV", "AUX", "CCONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB"]
-
-
+        return ["N","ADVPCS","PRONPS",'NUMC','ADVPS',"PRONPCS","ADJCS","NUMPC","ADJPC","ADJPS","AUXCS","VNC","NPCS","PRONPC","VRELC","VNS","ADJPCS","PRONS","VCS","INT","AUXS","VC","NS","AUXC","VRELCS","PRONCS","VRELS","NPS","ADJ","ADVS","ADJP","PUNC","VPCS","PREP","NP","NC","VN","NCS","VS","V","ADVC","PRON","VREL","PRONC","NUMOR","ADVP","CONJ","NPC","PRON","AUX","PRONP","NUMP","NUM","NUMCR","VPS","VP","ADV","VPC","ADJS","ADJC","VNCS","ADVPC","VPSs"]
+       
+        # return ["X", "ADJ", "ADP", "ADV", "AUX", "CCONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB"]
+      
 #if __name__ == "__main__":
 #    examples = read_examples_from_file('data/pos_data_100/pcm/', 'test')
 #    print(len(examples))
