@@ -620,7 +620,7 @@ def main():
     if args.model_name_or_path == 'bonadossou/afrolm_active_learning':
         config_class, model_class, tokenizer_class = XLMRobertaConfig, XLMRobertaForTokenClassification, XLMRobertaTokenizer
     else:
-        config_class, model_class, tokenizer_class = AutoConfig, AutoModelForTokenClassification, AutoTokenizer #MODEL_CLASSES[args.model_type]
+        config_class, model_class, tokenizer_class = AutoConfig, AutoModelForTokenClassification, XLMRobertaTokenizer #MODEL_CLASSES[args.model_type]
 
     config = config_class.from_pretrained(
         args.config_name if args.config_name else args.model_name_or_path,
