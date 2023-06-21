@@ -49,39 +49,55 @@ class InputFeatures(object):
         self.label_ids = label_ids
 
 
+# def read_examples_from_file(data_dir, mode):
+#     file_path = os.path.join(data_dir, "{}.txt".format(mode))
+#     guid_index = 1
+#     examples = []
+#     with open(file_path, encoding="utf-8") as f:
+#         words = []
+#         labels = []
+#         for line in f:
+#             line = line.strip()
+#             #print(line)
+#             if len(line) < 2  or line == "\n":
+#                 #print(line, words)
+#                 if len(words) <1:
+#                     print(guid_index)
+#                     print(line, words)
+#                 if words:
+#                     #print(guid_index, words)
+#                     examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
+#                     guid_index += 1
+#                     words = []
+#                     labels = []
+#             else:
+#                 splits = line.split(" ")
+#                 words.append(splits[0])
+#                 if len(splits) > 1:
+#                     labels.append(splits[-1].replace("\n", ""))
+#                 else:
+#                     # Examples could have no label for mode = "test"
+#                     labels.append("X")
+#         if words:
+#             examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
+#     return examples
 def read_examples_from_file(data_dir, mode):
-    file_path = os.path.join(data_dir, "{}.txt".format(mode))
+    file_path = os.path.join(data_dir, "{}.tsv".format(mode))
     guid_index = 1
     examples = []
     with open(file_path, encoding="utf-8") as f:
-        words = []
-        labels = []
         for line in f:
             line = line.strip()
-            #print(line)
-            if len(line) < 2  or line == "\n":
-                #print(line, words)
-                if len(words) <1:
-                    print(guid_index)
-                    print(line, words)
-                if words:
-                    #print(guid_index, words)
-                    examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
-                    guid_index += 1
-                    words = []
-                    labels = []
-            else:
-                splits = line.split(" ")
-                words.append(splits[0])
-                if len(splits) > 1:
-                    labels.append(splits[-1].replace("\n", ""))
-                else:
-                    # Examples could have no label for mode = "test"
-                    labels.append("X")
-        if words:
+            if len(line) == 0:
+                continue
+            splits = line.split("\t")
+            if len(splits) < 2:
+                continue
+            words = splits[0].split(" ")
+            labels = splits[1].split(" ")
             examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
+            guid_index += 1
     return examples
-
 
 def convert_examples_to_features(
     examples,
