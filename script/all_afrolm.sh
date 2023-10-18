@@ -15,7 +15,7 @@ do
       export SAVE_STEPS=10000000
       export SEED=$j
 
-      CUDA_VISIBLE_DEVICES=0 python3 ../train_pos.py --data_dir /home/atnafuatx/data/POS/${LANG}/ \
+      CUDA_VISIBLE_DEVICES=0 python3 ../train_pos.py --data_dir /home/atnafuatx/POS/${LANG}/ \
       --model_type xlmroberta \
       --model_name_or_path $BERT_MODEL \
       --output_dir $OUTPUT_DIR \
