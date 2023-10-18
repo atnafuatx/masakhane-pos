@@ -18,6 +18,7 @@
 
 import logging
 import os
+import math
 
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,11 @@ class InputExample(object):
         self.words = words
         self.labels = labels
 
+def isnan(value):
+    try:
+        return math.isnan(float(value))
+    except:
+        return False
 
 class InputFeatures(object):
     """A single set of features of data."""
@@ -49,55 +55,41 @@ class InputFeatures(object):
         self.label_ids = label_ids
 
 
-# def read_examples_from_file(data_dir, mode):
-#     file_path = os.path.join(data_dir, "{}.txt".format(mode))
-#     guid_index = 1
-#     examples = []
-#     with open(file_path, encoding="utf-8") as f:
-#         words = []
-#         labels = []
-#         for line in f:
-#             line = line.strip()
-#             #print(line)
-#             if len(line) < 2  or line == "\n":
-#                 #print(line, words)
-#                 if len(words) <1:
-#                     print(guid_index)
-#                     print(line, words)
-#                 if words:
-#                     #print(guid_index, words)
-#                     examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
-#                     guid_index += 1
-#                     words = []
-#                     labels = []
-#             else:
-#                 splits = line.split(" ")
-#                 words.append(splits[0])
-#                 if len(splits) > 1:
-#                     labels.append(splits[-1].replace("\n", ""))
-#                 else:
-#                     # Examples could have no label for mode = "test"
-#                     labels.append("X")
-#         if words:
-#             examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
-#     return examples
 def read_examples_from_file(data_dir, mode):
-    file_path = os.path.join(data_dir, "{}.tsv".format(mode))
+    file_path = os.path.join(data_dir, "{}.txt".format(mode))
     guid_index = 1
     examples = []
     with open(file_path, encoding="utf-8") as f:
+        words = []
+        labels = []
         for line in f:
             line = line.strip()
-            if len(line) == 0:
-                continue
-            splits = line.split("\t")
-            if len(splits) < 2:
-                continue
-            words = splits[0].split(" ")
-            labels = splits[1].split(" ")
+            #print(line)
+            if len(line) < 2  or line == "\n":
+                #print(line, words)
+                if len(words) <1:
+                    print(guid_index)
+                    print(line, words)
+                if words:
+                    #print(guid_index, words)
+                    examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
+                    guid_index += 1
+                    words = []
+                    labels = []
+            else:
+                splits = line.split("\t")
+                if len(splits) > 1 and (isnan(splits[1]) or (isnan(splits[0]) and isnan(splits[1]))):
+                    continue
+                words.append(splits[0])
+                if len(splits) > 1:
+                    labels.append(splits[-1].replace("\n", ""))
+                else:
+                    # Examples could have no label for mode = "test"
+                    labels.append("X")
+        if words:
             examples.append(InputExample(guid="{}-{}".format(mode, guid_index), words=words, labels=labels))
-            guid_index += 1
     return examples
+
 
 def convert_examples_to_features(
     examples,
@@ -134,6 +126,8 @@ def convert_examples_to_features(
         tokens = []
         label_ids = []
         for word, label in zip(example.words, example.labels):
+            if label not in label_map:
+               continue
             word_tokens = tokenizer.tokenize(word)
             tokens.extend(word_tokens)
             # Use the real label id for the first token of the word, and padding ids for the remaining tokens
@@ -231,10 +225,9 @@ def get_labels(path):
             labels = ["X"] + labels
         return labels
     else:
-        return ["N","ADVPCS","PRONPS",'NUMC','ADVPS',"PRONPCS","ADJCS","NUMPC","ADJPC","ADJPS","AUXCS","VNC","NPCS","PRONPC","VRELC","VNS","ADJPCS","PRONS","VCS","INT","AUXS","VC","NS","AUXC","VRELCS","PRONCS","VRELS","NPS","ADJ","ADVS","ADJP","PUNC","VPCS","PREP","NP","NC","VN","NCS","VS","V","ADVC","PRON","VREL","PRONC","NUMOR","ADVP","CONJ","NPC","PRON","AUX","PRONP","NUMP","NUM","NUMCR","VPS","VP","ADV","VPC","ADJS","ADJC","VNCS","ADVPC","VPSs"]
-       
         # return ["X", "ADJ", "ADP", "ADV", "AUX", "CCONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB"]
-      
+        return ['X','N', 'PUNC', 'NP' ,'ADJ', 'NUMCR', 'AUX','PREP','VREL','V','VP','CONJ', 'ADV','NUMP','ADJP','PRON','VN','NPC','ADJC','PRONP','VPC','NC','UNC','NUMOR','ADJPC','PRONC','VC','PREPC','PRONPC','NUMC','NUMPC']
+
 #if __name__ == "__main__":
 #    examples = read_examples_from_file('data/pos_data_100/pcm/', 'test')
 #    print(len(examples))
